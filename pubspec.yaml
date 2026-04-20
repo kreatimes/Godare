@@ -1,0 +1,98 @@
+name: godare
+description: "GoDare - Fitness challenge app"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.6
+  page_transition: ^2.0.2
+  responsive_sizer: ^3.3.0
+
+  # HTTP client con interceptores
+  dio: ^5.4.3+1
+
+  # Almacenamiento seguro del JWT
+  flutter_secure_storage: ^9.2.2
+
+  # Estado global
+  provider: ^6.1.2
+
+  # Reproductor de vídeo
+  video_player: ^2.8.4
+
+  # Selector de imágenes/vídeos para subir retos
+  image_picker: ^1.1.2
+
+  # Permisos
+  # ⚠️  v12 requiere compileSdkVersion 35 (Android) e iOS deployment target 12.0
+  permission_handler: ^12.0.1
+
+  # Internacionalización
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
+  # Logs
+  logger: ^2.3.0
+
+  # HTML en texto
+  flutter_html: ^3.0.0-beta.2
+
+  # Compartir contenido
+  share_plus: ^12.0.2
+
+  # URLs externas
+  url_launcher: ^6.2.6
+
+  # Variables de entorno (.env)
+  flutter_dotenv: ^6.0.0
+
+  # HTTP nativo (usado por cloudinary_service)
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/.env
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+
+  fonts:
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald/Oswald-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Oswald/Oswald-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Oswald/Oswald-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Oswald/Oswald-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Oswald/Oswald-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Oswald/Oswald-ExtraLight.ttf
+          weight: 200
+
+flutter_intl:
+  enabled: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
