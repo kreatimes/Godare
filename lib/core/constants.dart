@@ -6,7 +6,7 @@ class Constants {
   // static const String apiBaseUrl = 'http://10.0.2.2:8080'; // Emulador Android Studio
   // static const String apiBaseUrl = 'http://localhost:8080'; // iOS simulator
   // static const String apiBaseUrl = 'http://192.168.1.X:8080'; // Dispositivo fisico en local
-  static const String apiBaseUrl = 'https://TU_RAILWAY_URL.up.railway.app'; // Produccion
+  static const String apiBaseUrl = 'https://godare-backend-production.up.railway.app'; // Produccion
 
   // Logo de la app
   static const String logoLocal = 'assets/images/logo.png';

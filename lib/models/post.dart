@@ -113,6 +113,9 @@ class PostComment {
   final String? userImageUrl;
   final String commentText;
   final DateTime createdAt;
+  final int likesCount;
+  final int dislikesCount;
+  final String? currentReaction;
 
   const PostComment({
     required this.id,
@@ -122,6 +125,9 @@ class PostComment {
     this.userImageUrl,
     required this.commentText,
     required this.createdAt,
+    this.likesCount = 0,
+    this.dislikesCount = 0,
+    this.currentReaction,
   });
 
   factory PostComment.fromJson(Map<String, dynamic> json) {
@@ -133,6 +139,9 @@ class PostComment {
       userImageUrl: json['userImageUrl'],
       commentText: json['commentText'],
       createdAt: DateTime.parse(json['createdAt']),
+      likesCount: json['likesCount'] ?? 0,
+      dislikesCount: json['dislikesCount'] ?? 0,
+      currentReaction: json['currentReaction'],
     );
   }
 }

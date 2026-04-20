@@ -5,7 +5,6 @@ import 'package:godare/models/post.dart';
 /// Servicio para el feed de posts, reacciones y comentarios
 class PostService {
 
-  /// Feed global con paginación por cursor
   static Future<FeedResponse> getGlobalFeed({
     int limit = 10,
     String? cursorId,
@@ -26,7 +25,6 @@ class PostService {
     }
   }
 
-  /// Feed de usuarios seguidos con paginación por cursor
   static Future<FeedResponse> getFollowingFeed({
     int limit = 10,
     String? cursorId,
@@ -47,7 +45,6 @@ class PostService {
     }
   }
 
-  /// Posts de un usuario concreto con paginación por cursor
   static Future<FeedResponse> getUserPosts(
       String userId, {
         int limit = 10,
@@ -69,7 +66,6 @@ class PostService {
     }
   }
 
-  /// Posts del usuario autenticado con paginación por cursor
   static Future<FeedResponse> getMyPosts({
     int limit = 10,
     String? cursorId,
@@ -90,7 +86,6 @@ class PostService {
     }
   }
 
-  /// Detalle completo de un post
   static Future<Post> getPostDetail(String postId) async {
     try {
       final response = await ApiClient.instance.get('/api/posts/$postId');
@@ -100,7 +95,31 @@ class PostService {
     }
   }
 
-  /// Da like a un post — si ya tenía like lo elimina (toggle)
+  /// Devuelve el ID del post vinculado a un reto completado.
+  static Future<String> getPostIdByChallenge(String userChallengeId) async {
+    try {
+      final response = await ApiClient.instance
+          .get('/api/posts/by-challenge/$userChallengeId');
+      return response.data['postId'] as String;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Devuelve todos los comentarios escritos por un usuario.
+  /// Cada comentario incluye [postId] para navegar al post original.
+  static Future<List<PostComment>> getUserComments(String userId) async {
+    try {
+      final response =
+      await ApiClient.instance.get('/api/users/$userId/comments');
+      return (response.data as List<dynamic>)
+          .map((c) => PostComment.fromJson(c))
+          .toList();
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   static Future<PostReaction> likePost(String postId) async {
     try {
       final response =
@@ -111,7 +130,6 @@ class PostService {
     }
   }
 
-  /// Da dislike a un post — si ya tenía dislike lo elimina (toggle)
   static Future<PostReaction> dislikePost(String postId) async {
     try {
       final response =
@@ -122,7 +140,6 @@ class PostService {
     }
   }
 
-  /// Devuelve los comentarios de un post
   static Future<List<PostComment>> getComments(String postId) async {
     try {
       final response =
@@ -135,7 +152,6 @@ class PostService {
     }
   }
 
-  /// Añade un comentario a un post
   static Future<PostComment> addComment(
       String postId, String commentText) async {
     try {
@@ -149,7 +165,6 @@ class PostService {
     }
   }
 
-  /// Edita un comentario propio
   static Future<PostComment> updateComment(
       String commentId, String commentText) async {
     try {
@@ -163,7 +178,6 @@ class PostService {
     }
   }
 
-  /// Elimina un comentario propio
   static Future<void> deleteComment(String commentId) async {
     try {
       await ApiClient.instance.delete('/api/posts/comments/$commentId');
@@ -172,13 +186,32 @@ class PostService {
     }
   }
 
+  static Future<PostReaction> likeComment(String commentId) async {
+    try {
+      final response = await ApiClient.instance
+          .post('/api/posts/comments/$commentId/like');
+      return PostReaction.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  static Future<PostReaction> dislikeComment(String commentId) async {
+    try {
+      final response = await ApiClient.instance
+          .post('/api/posts/comments/$commentId/dislike');
+      return PostReaction.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   static PostException _handleError(DioException e) {
     final statusCode = e.response?.statusCode;
     final message = e.response?.data?['message'] as String?;
-
     switch (statusCode) {
       case 400:
-        return PostException(message ?? 'Solicitud incorrecta');
+        return PostException(message ?? 'No hay post asociado a este reto');
       case 404:
         return PostException(message ?? 'Post no encontrado');
       default:
@@ -187,7 +220,6 @@ class PostService {
   }
 }
 
-/// Excepción específica para errores de posts
 class PostException implements Exception {
   final String message;
   const PostException(this.message);

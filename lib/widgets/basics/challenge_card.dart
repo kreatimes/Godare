@@ -166,6 +166,7 @@ class ChallengeCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -181,6 +182,7 @@ class ChallengeCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -193,6 +195,7 @@ class ChallengeCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -701,7 +704,7 @@ class _TransferModalState extends State<_TransferModal> {
 }
 
 // ---------------------------------------------------------------------------
-// Modal de completar RETO — permite subir el video de la prueba
+// Modal de completar RETO — permite subir una foto o video de la prueba
 // ---------------------------------------------------------------------------
 
 class _DareModal extends StatefulWidget {
@@ -715,22 +718,58 @@ class _DareModal extends StatefulWidget {
 
 class _DareModalState extends State<_DareModal> {
   File? _selectedFile;
+  bool _isPhoto = false;
   bool _isLoading = false;
   bool _isUploading = false;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickFromGallery() async {
-    final picked = await _picker.pickVideo(
-        source: ImageSource.gallery,
-        maxDuration: const Duration(minutes: 1));
-    if (picked != null) setState(() => _selectedFile = File(picked.path));
+    final choice = await _showMediaTypeSheet();
+    if (choice == null) return;
+    if (choice == 'photo') {
+      final picked = await _picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) setState(() { _selectedFile = File(picked.path); _isPhoto = true; });
+    } else {
+      final picked = await _picker.pickVideo(
+          source: ImageSource.gallery, maxDuration: const Duration(minutes: 1));
+      if (picked != null) setState(() { _selectedFile = File(picked.path); _isPhoto = false; });
+    }
   }
 
   Future<void> _pickFromCamera() async {
-    final picked = await _picker.pickVideo(
-        source: ImageSource.camera,
-        maxDuration: const Duration(minutes: 1));
-    if (picked != null) setState(() => _selectedFile = File(picked.path));
+    final choice = await _showMediaTypeSheet();
+    if (choice == null) return;
+    if (choice == 'photo') {
+      final picked = await _picker.pickImage(source: ImageSource.camera);
+      if (picked != null) setState(() { _selectedFile = File(picked.path); _isPhoto = true; });
+    } else {
+      final picked = await _picker.pickVideo(
+          source: ImageSource.camera, maxDuration: const Duration(minutes: 1));
+      if (picked != null) setState(() { _selectedFile = File(picked.path); _isPhoto = false; });
+    }
+  }
+
+  Future<String?> _showMediaTypeSheet() {
+    return showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image),
+              title: const Text('Foto'),
+              onTap: () => Navigator.pop(context, 'photo'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam),
+              title: const Text('Video'),
+              onTap: () => Navigator.pop(context, 'video'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // Sube el video a Cloudinary y luego llama a la API para marcar el reto como completado
@@ -802,7 +841,7 @@ class _DareModalState extends State<_DareModal> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _isLoading ? null : _pickFromCamera,
-                  icon: const Icon(Icons.videocam),
+                  icon: const Icon(Icons.camera_alt),
                   label: const Text('Camara'),
                   style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12)),
@@ -813,27 +852,33 @@ class _DareModalState extends State<_DareModal> {
 
           if (_selectedFile != null) ...[
             const SizedBox(height: 12),
-            Row(children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 18),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  _selectedFile!.path.split('/').last,
-                  style: const TextStyle(fontSize: 13),
-                  overflow: TextOverflow.ellipsis,
+            if (_isPhoto)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(_selectedFile!, height: 160, width: double.infinity, fit: BoxFit.cover),
+              )
+            else
+              Row(children: [
+                const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _selectedFile!.path.split('/').last,
+                    style: const TextStyle(fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-            ]),
+              ]),
           ],
 
           if (_isUploading) ...[
             const SizedBox(height: 12),
-            const Row(children: [
-              SizedBox(width: 16, height: 16,
+            Row(children: [
+              const SizedBox(width: 16, height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2)),
-              SizedBox(width: 10),
-              Text('Subiendo video...',
-                  style: TextStyle(fontSize: 13, color: Colors.grey)),
+              const SizedBox(width: 10),
+              Text(_isPhoto ? 'Subiendo foto...' : 'Subiendo video...',
+                  style: const TextStyle(fontSize: 13, color: Colors.grey)),
             ]),
           ],
 

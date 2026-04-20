@@ -260,6 +260,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _validateNick(String? value) {
     if (value == null || value.trim().isEmpty) return 'El nick es obligatorio';
+    if (value.contains(' ')) return 'El nick no puede contener espacios';
     if (value.trim().length < 3) return 'Debe tener al menos 3 caracteres';
     if (value.trim().length > 20) return 'No puede superar 20 caracteres';
     return null;

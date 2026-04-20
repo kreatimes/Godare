@@ -4,12 +4,14 @@ import 'package:godare/common/my_routers.dart';
 import 'package:godare/models/post.dart';
 import 'package:godare/services/post_service.dart';
 import 'package:godare/values/colors_app.dart';
+import 'package:godare/widgets/basics/heart_overlay.dart';
+import 'package:godare/widgets/basics/post_image_view.dart';
 import 'package:godare/widgets/basics/report_modal.dart';
 import 'package:godare/widgets/basics/video_player_screen.dart';
 import 'package:godare/services/report_service.dart';
 
 // Tarjeta de post que aparece en el feed.
-// Muestra el video del reto completado junto con likes, dislikes y comentarios.
+// Muestra el video o imagen del reto completado junto con likes, dislikes y comentarios.
 class PostCard extends StatefulWidget {
   final Post post;
 
@@ -99,7 +101,7 @@ class _PostCardState extends State<PostCard> {
               backgroundImage: widget.post.userImageUrl != null
                   ? NetworkImage(widget.post.userImageUrl!)
                   : const AssetImage('assets/images/default_profile.png')
-                      as ImageProvider,
+              as ImageProvider,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -137,10 +139,12 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  // Muestra el texto del reto y el video grabado por el usuario
+  // Muestra el texto del reto y el video/imagen grabado por el usuario.
+  // - Vídeo: envuelto en HeartOverlay (doble tap → like + animación corazón)
+  // - Imagen: usa PostImageView (doble tap → like, tap → zoom fullscreen)
   Widget _buildMedia() {
-    final hasMedia = widget.post.mediaUrl != null &&
-        widget.post.mediaUrl!.isNotEmpty;
+    final hasMedia =
+        widget.post.mediaUrl != null && widget.post.mediaUrl!.isNotEmpty;
 
     final isVideo = hasMedia &&
         (widget.post.mediaUrl!.contains('.mp4') ||
@@ -150,7 +154,7 @@ class _PostCardState extends State<PostCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Texto del reto que completo el usuario — siempre visible
+        // Texto del reto que completó el usuario — siempre visible
         if (widget.post.textResponse != null &&
             widget.post.textResponse!.isNotEmpty)
           Container(
@@ -177,30 +181,23 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
 
-        // Video o imagen adjunta al post
+        // Vídeo o imagen adjunta al post
         if (hasMedia)
           isVideo
-              ? SizedBox(
-                  height: 400,
-                  width: double.infinity,
-                  child: VideoPlayerScreen(videoUrl: widget.post.mediaUrl!),
-                )
-              : SizedBox(
-                  height: 400,
-                  width: double.infinity,
-                  child: Image.network(
-                    widget.post.mediaUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Colors.grey.shade200,
-                      child: const Icon(
-                        Icons.broken_image,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
+          // Vídeo: HeartOverlay permite doble-tap para dar like
+              ? HeartOverlay(
+            onDoubleTap: _handleLike,
+            child: SizedBox(
+              height: 400,
+              width: double.infinity,
+              child: VideoPlayerScreen(videoUrl: widget.post.mediaUrl!),
+            ),
+          )
+          // Imagen: PostImageView gestiona doble-tap (like) y tap (zoom)
+              : PostImageView(
+            imageUrl: widget.post.mediaUrl!,
+            onDoubleTap: _handleLike,
+          ),
       ],
     );
   }
@@ -232,7 +229,7 @@ class _PostCardState extends State<PostCard> {
                   ? Icons.thumb_down
                   : Icons.thumb_down_outlined,
               color:
-                  _currentReaction == 'DISLIKE' ? Colors.blue : Colors.black,
+              _currentReaction == 'DISLIKE' ? Colors.blue : Colors.black,
             ),
           ),
           Text('$_dislikesCount', style: const TextStyle(fontSize: 13)),

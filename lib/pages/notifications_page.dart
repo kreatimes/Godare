@@ -85,6 +85,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
           : RefreshIndicator(
         onRefresh: _fetchNotifications,
         child: ListView.builder(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+          ),
           itemCount: _notifications.length,
           itemBuilder: (context, index) =>
               _NotificationTile(
@@ -184,26 +187,36 @@ class _NotificationTile extends StatelessWidget {
 
   /// Navega a la pantalla relevante según el tipo de notificación
   void _handleNavigation(BuildContext context) {
+    final data = notification.data;
+
     switch (notification.type) {
-      case 'FOLLOW':
-        final fromUserId = notification.data?['fromUserId'] as String?;
-        if (fromUserId != null) {
-          Navigator.pushNamed(
-            context,
-            ROUTE_USER_PROFILE,
-            arguments: fromUserId,
-          );
-        }
-        break;
       case 'LIKE_RECEIVED':
       case 'COMMENT_RECEIVED':
-      // TODO: navegar al post cuando tengamos la pantalla de detalle
+      // Ambas llevan al post donde ocurrió la interacción
+        final postId = data?['postId'] as String?;
+        if (postId != null) {
+          Navigator.pushNamed(context, ROUTE_POST_DETAIL, arguments: postId);
+        }
         break;
+
+      case 'FOLLOW':
+      // Lleva al perfil del usuario que nos ha seguido
+        final fromUserId = data?['fromUserId'] as String?;
+        if (fromUserId != null) {
+          Navigator.pushNamed(
+              context, ROUTE_USER_PROFILE, arguments: fromUserId);
+        }
+        break;
+
       case 'CHALLENGE_TRANSFERRED':
-      // TODO: navegar a mis retos pendientes
+      // Lleva a la pantalla principal donde están los retos pendientes
+        Navigator.pushNamedAndRemoveUntil(
+            context, ROUTE_HOME, (route) => false);
         break;
+
       case 'RANGE_UP':
-      // TODO: navegar al perfil para ver el nuevo rango
+      // Lleva al perfil propio para ver el nuevo rango
+        Navigator.pushNamed(context, ROUTE_USER_PROFILE);
         break;
     }
   }

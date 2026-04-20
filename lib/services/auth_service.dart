@@ -95,6 +95,29 @@ class AuthService {
     }
   }
 
+  /// Reenvía el email de verificación de cuenta.
+  /// Lanza [EmailNotFoundForVerificationException] si el email no existe.
+  /// Lanza [EmailAlreadyVerifiedException] si la cuenta ya está verificada.
+  /// Devuelve el email ofuscado si el envío fue exitoso.
+  static Future<String> resendVerification(String email) async {
+    try {
+      final response = await ApiClient.instance.post(
+        '/api/auth/resend-verification',
+        data: {'email': email.trim().toLowerCase()},
+      );
+      return response.data as String;
+    } on DioException catch (e) {
+      final message = e.response?.data?['message'] as String?;
+      if (message == 'EMAIL_NOT_FOUND') {
+        throw EmailNotFoundForVerificationException();
+      }
+      if (message == 'EMAIL_ALREADY_VERIFIED') {
+        throw EmailAlreadyVerifiedException();
+      }
+      throw _handleError(e);
+    }
+  }
+
   /// Cierra sesión
   static Future<void> logout() async {
     await SecureStorage.clearToken();
@@ -139,4 +162,16 @@ class EmailNotVerifiedException extends AuthException {
   final String emailOfuscado;
   const EmailNotVerifiedException(this.emailOfuscado)
       : super('Email no verificado');
+}
+
+/// El email introducido no existe en el sistema
+class EmailNotFoundForVerificationException extends AuthException {
+  const EmailNotFoundForVerificationException()
+      : super('Este email no está registrado');
+}
+
+/// La cuenta ya está verificada
+class EmailAlreadyVerifiedException extends AuthException {
+  const EmailAlreadyVerifiedException()
+      : super('Esta cuenta ya está verificada');
 }

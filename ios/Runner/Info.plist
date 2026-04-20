@@ -6,9 +6,8 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 
-	<!-- ⚠️  Cambiado: "Verdadoreto" → "Verdad o Reto" (nombre visible en el móvil) -->
 	<key>CFBundleDisplayName</key>
-	<string>Verdad o Reto</string>
+	<string>Go Dare</string>
 
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -19,9 +18,8 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 
-	<!-- Nombre interno del bundle — se deja en minúsculas como estaba -->
 	<key>CFBundleName</key>
-	<string>verdadoreto</string>
+	<string>godare</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>

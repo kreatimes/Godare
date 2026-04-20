@@ -23,6 +23,7 @@ class _ReportModalState extends State<ReportModal> {
   static const List<_ReportReason> _reasons = [
     _ReportReason(code: 'SEXUAL_CONTENT', label: 'Contenido sexual'),
     _ReportReason(code: 'VIOLENCE',       label: 'Violencia'),
+    _ReportReason(code: 'HARASSMENT',     label: 'Acoso o abuso'),
     _ReportReason(code: 'SPAM',           label: 'Spam'),
     _ReportReason(code: 'HATE_SPEECH',    label: 'Discurso de odio'),
     _ReportReason(code: 'MISINFORMATION', label: 'Información falsa'),
@@ -68,7 +69,12 @@ class _ReportModalState extends State<ReportModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 24, left: 20, right: 20),
+      padding: EdgeInsets.only(
+        top: 12,
+        left: 20,
+        right: 20,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

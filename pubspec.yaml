@@ -28,6 +28,9 @@ dependencies:
   # Reproductor de vídeo
   video_player: ^2.8.4
 
+  # Zoom de imágenes (fullscreen_image_view)
+  photo_view: ^0.15.0
+
   # Selector de imágenes/vídeos para subir retos
   image_picker: ^1.1.2
 

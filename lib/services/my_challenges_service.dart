@@ -24,6 +24,23 @@ class MyChallengesService {
     }
   }
 
+  // Devuelve los retos completados de un usuario concreto por su ID
+  static Future<List<UserChallenge>> getUserChallenges(String userId, {String? state}) async {
+    try {
+      final response = await ApiClient.instance.get(
+        '/api/users/$userId/challenges',
+        queryParameters: {
+          if (state != null) 'state': state,
+        },
+      );
+      return (response.data as List<dynamic>)
+          .map((c) => UserChallenge.fromJson(c))
+          .toList();
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Convierte un DioException en una excepcion propia con mensaje legible
   static MyChallengesException _handleError(DioException e) {
     final message = e.response?.data?['message'] as String?;

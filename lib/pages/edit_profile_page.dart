@@ -62,6 +62,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _showImagePicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -248,6 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (value == null || value.trim().isEmpty) {
                     return 'El nick es obligatorio';
                   }
+                  if (value.contains(' ')) return 'El nick no puede contener espacios';
                   if (value.trim().length < 3) return 'Mínimo 3 caracteres';
                   if (value.trim().length > 20) return 'Máximo 20 caracteres';
                   return null;

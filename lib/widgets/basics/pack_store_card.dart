@@ -5,9 +5,9 @@ import 'package:godare/providers/user_provider.dart';
 import 'package:godare/services/pack_service.dart';
 import 'package:godare/values/colors_app.dart';
 
-/// Tarjeta de un pack en la tienda.
-/// Muestra imagen, nombre, tipo, cantidad y precio en coins.
-/// Al pulsar comprar muestra un diálogo de confirmación.
+// Tarjeta de un pack de retos en la tienda.
+// Muestra imagen, nombre, cantidad y precio en coins.
+// Al pulsar comprar muestra un dialogo de confirmacion antes de procesar.
 class PackStoreCard extends StatefulWidget {
   final PackStore pack;
 
@@ -20,6 +20,7 @@ class PackStoreCard extends StatefulWidget {
 class _PackStoreCardState extends State<PackStoreCard> {
   bool _isLoading = false;
 
+  // Muestra dialogo de confirmacion y procesa la compra si acepta
   Future<void> _handleBuy() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -76,6 +77,7 @@ class _PackStoreCardState extends State<PackStoreCard> {
 
       if (!mounted) return;
 
+      // Recargar el perfil para actualizar el saldo de coins en la UI
       await context.read<UserProvider>().loadProfile();
 
       if (!mounted) return;
@@ -83,7 +85,7 @@ class _PackStoreCardState extends State<PackStoreCard> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '¡Compra realizada! Se han generado ${result.generatedItems} items. '
+            'Compra realizada! Se han generado ${result.generatedItems} retos. '
                 'Te quedan ${result.remainingCoins} coins.',
           ),
           backgroundColor: Colors.green,
@@ -104,48 +106,167 @@ class _PackStoreCardState extends State<PackStoreCard> {
     }
   }
 
+  // Etiqueta del tipo de pack
   String _getTypeLabel(String type) {
     switch (type) {
       case 'DARE':
-        return 'Reto';
+        return 'Retos Fitness';
       default:
-        color = Colors.orange;
+        return type;
     }
+  }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: color.withValues(alpha: 0.6),
-          width: 1.5,
-        ),
-      ),
-      child: Text(
-        widget.pack.typeLabel,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.3,
+  // Color del badge segun el tipo de pack
+  Color _getTypeColor(String type) {
+    return ColorsApp.basePink;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _getTypeColor(widget.pack.type);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // Imagen local del pack según precio
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                _getPackImage(widget.pack.priceCoins),
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildPlaceholder(),
+              ),
+            ),
+
+            const SizedBox(width: 16),
+
+            // Informacion del pack
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Badge de tipo
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: color.withOpacity(0.4)),
+                    ),
+                    child: Text(
+                      _getTypeLabel(widget.pack.type),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Nombre del pack
+                  Text(
+                    widget.pack.name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Cantidad de retos
+                  Text(
+                    '${widget.pack.quantity} retos',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            // Precio y boton de compra
+            Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.monetization_on,
+                        color: Colors.amber, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${widget.pack.priceCoins}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _handleBuy,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorsApp.basePink,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                      : const Text('Comprar'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
+  // Devuelve el asset local según el precio del pack
+  String _getPackImage(int priceCoins) {
+    switch (priceCoins) {
+      case 35:
+        return 'assets/images/presion.png';
+      case 25:
+        return 'assets/images/limite.png';
+      case 18:
+        return 'assets/images/desafio.png';
+      case 10:
+        return 'assets/images/apuesta.png';
+      default:
+        return 'assets/images/desafio.png';
+    }
+  }
+
   Widget _buildPlaceholder() {
     return Container(
-      width: 100,
-      height: 100,
+      width: 80,
+      height: 80,
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Icon(
-        Icons.inventory_2,
-        color: Colors.grey,
-      ),
+      child: const Icon(Icons.fitness_center, color: Colors.grey),
     );
   }
 }

@@ -1,6 +1,4 @@
-# verdadoreto
-
-Application verdad o reto
+# godare
 
 ## Getting Started
 

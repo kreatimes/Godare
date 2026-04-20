@@ -11,6 +11,7 @@ import 'package:godare/pages/search_users_page.dart';
 import 'package:godare/pages/user_profile_page.dart';
 
 import '../pages/change_password_page.dart';
+import '../pages/follow_list_page.dart';
 import '../pages/post_detail_page.dart';
 
 const String ROUTE_HOME = '/home';
@@ -24,6 +25,7 @@ const String ROUTE_SEARCH_USERS = '/searchUsers';
 const String ROUTE_EDIT_PROFILE = '/editProfile';
 const String ROUTE_CHANGE_PASSWORD = '/changePassword';
 const String ROUTE_POST_DETAIL = '/postDetail';
+const String ROUTE_FOLLOW_LIST = '/followList';
 
 class MyRouters {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -69,6 +71,14 @@ class MyRouters {
         final postId = settings.arguments as String?;
         return MaterialPageRoute(
           builder: (_) => PostDetailPage(postId: postId ?? ''),
+        );
+      case ROUTE_FOLLOW_LIST:
+        final args = settings.arguments as FollowListArgs;
+        return MaterialPageRoute(
+          builder: (_) => FollowListPage(
+            userId: args.userId,
+            showFollowers: args.showFollowers,
+          ),
         );
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());
