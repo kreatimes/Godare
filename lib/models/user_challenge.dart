@@ -1,17 +1,19 @@
-// Modelo que representa un reto asignado al usuario.
-// Cuando el usuario compra un pack o recibe un reto diario, se crea
-// un UserChallenge en la base de datos vinculado a su cuenta.
 class UserChallenge {
   final String id;
   final String challengeId;
-  final String challengeQuestion; // El texto del reto que tiene que completar
+  final String challengeQuestion;
   final String state;
   final bool isDaily;
   final DateTime arrivalDate;
   final DateTime? expiresAt;
   final DateTime? datePassed;
-  final String? fileUrl; // URL del video subido al completar el reto
+  final String? fileUrl;
   final int finalScore;
+
+  // Contadores de veredicto de la comunidad.
+  // Se fijan al cerrar la votación (5 días) y ya no cambian.
+  final int approvedCount;
+  final int notApprovedCount;
 
   const UserChallenge({
     required this.id,
@@ -24,6 +26,8 @@ class UserChallenge {
     this.datePassed,
     this.fileUrl,
     required this.finalScore,
+    this.approvedCount = 0,
+    this.notApprovedCount = 0,
   });
 
   factory UserChallenge.fromJson(Map<String, dynamic> json) {
@@ -38,13 +42,22 @@ class UserChallenge {
       datePassed: json['datePassed'] != null ? DateTime.parse(json['datePassed']) : null,
       fileUrl: json['fileUrl'],
       finalScore: json['finalScore'] ?? 0,
+      approvedCount: json['approvedCount'] ?? 0,
+      notApprovedCount: json['notApprovedCount'] ?? 0,
     );
   }
 
-  // Metodos de conveniencia para comprobar el estado sin comparar strings a mano
-  bool get isPending => state == 'OPEN';
-  bool get isCompleted => state == 'PASSED';
-  bool get isExpired => state == 'EXPIRED';
-  bool get isTransferred => state == 'TRANSFERRED';
-  bool get isClosed => state == 'CLOSED';
+  bool get isPending      => state == 'OPEN';
+  bool get isCompleted    => state == 'PASSED';
+  bool get isExpired      => state == 'EXPIRED';
+  bool get isTransferred  => state == 'TRANSFERRED';
+  bool get isClosed       => state == 'CLOSED';
+  bool get isFailedByVote => state == 'FAILED_BY_VOTE';
+  bool get isFailed       => isExpired || isFailedByVote;
+
+  String get failedLabel    => isFailedByVote ? 'Rechazado' : 'Fallado';
+  String get failedSubtitle => isFailedByVote ? 'La comunidad votó que no fue superado' : '';
+
+  // Muestra los contadores si hay al menos un voto registrado
+  bool get hasVerdictVotes => approvedCount > 0 || notApprovedCount > 0;
 }
