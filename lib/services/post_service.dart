@@ -140,6 +140,28 @@ class PostService {
     }
   }
 
+  /// Vota que el reto SÍ fue superado
+  static Future<PostReaction> approvePost(String postId) async {
+    try {
+      final response =
+      await ApiClient.instance.post('/api/posts/$postId/approve');
+      return PostReaction.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Vota que el reto NO fue superado
+  static Future<PostReaction> notApprovePost(String postId) async {
+    try {
+      final response =
+      await ApiClient.instance.post('/api/posts/$postId/not-approve');
+      return PostReaction.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   static Future<List<PostComment>> getComments(String postId) async {
     try {
       final response =

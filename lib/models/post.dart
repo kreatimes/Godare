@@ -15,6 +15,11 @@ class Post {
   final int commentsCount;
   final String? currentReaction; // Reaccion del usuario autenticado (LIKE, DISLIKE o null)
 
+  // Veredicto de la comunidad: ¿el reto fue realmente superado?
+  final int approvedCount;
+  final int notApprovedCount;
+  final String? currentVerdict; // APPROVED, NOT_APPROVED o null
+
   const Post({
     required this.id,
     required this.userId,
@@ -28,6 +33,9 @@ class Post {
     required this.dislikesCount,
     required this.commentsCount,
     this.currentReaction,
+    this.approvedCount = 0,
+    this.notApprovedCount = 0,
+    this.currentVerdict,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -44,6 +52,9 @@ class Post {
       dislikesCount: json['dislikesCount'] ?? 0,
       commentsCount: json['commentsCount'] ?? 0,
       currentReaction: json['currentReaction'],
+      approvedCount: json['approvedCount'] ?? 0,
+      notApprovedCount: json['notApprovedCount'] ?? 0,
+      currentVerdict: json['currentVerdict'],
     );
   }
 
@@ -79,19 +90,25 @@ class FeedResponse {
   }
 }
 
-// Respuesta que devuelve el servidor al reaccionar a un post (like/dislike).
+// Respuesta que devuelve el servidor al reaccionar a un post (like/dislike/veredicto).
 // Devuelve los contadores actualizados para actualizar la UI sin recargar.
 class PostReaction {
   final String message;
   final int likesCount;
   final int dislikesCount;
   final String currentReaction;
+  final int approvedCount;
+  final int notApprovedCount;
+  final String currentVerdict;
 
   const PostReaction({
     required this.message,
     required this.likesCount,
     required this.dislikesCount,
     required this.currentReaction,
+    this.approvedCount = 0,
+    this.notApprovedCount = 0,
+    this.currentVerdict = 'NONE',
   });
 
   factory PostReaction.fromJson(Map<String, dynamic> json) {
@@ -100,6 +117,9 @@ class PostReaction {
       likesCount: json['likesCount'] ?? 0,
       dislikesCount: json['dislikesCount'] ?? 0,
       currentReaction: json['currentReaction'] ?? 'NONE',
+      approvedCount: json['approvedCount'] ?? 0,
+      notApprovedCount: json['notApprovedCount'] ?? 0,
+      currentVerdict: json['currentVerdict'] ?? 'NONE',
     );
   }
 }

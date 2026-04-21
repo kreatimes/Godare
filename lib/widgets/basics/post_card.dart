@@ -11,7 +11,8 @@ import 'package:godare/widgets/basics/video_player_screen.dart';
 import 'package:godare/services/report_service.dart';
 
 // Tarjeta de post que aparece en el feed.
-// Muestra el video o imagen del reto completado junto con likes, dislikes y comentarios.
+// Muestra el video o imagen del reto completado junto con likes, dislikes,
+// veredicto de la comunidad (¿superado?) y comentarios.
 class PostCard extends StatefulWidget {
   final Post post;
 
@@ -26,14 +27,20 @@ class _PostCardState extends State<PostCard> {
   late int _dislikesCount;
   late String _currentReaction;
 
+  // Veredicto: ¿la comunidad considera que el reto fue superado?
+  late int _approvedCount;
+  late int _notApprovedCount;
+  late String _currentVerdict;
+
   @override
   void initState() {
     super.initState();
-    // Inicializamos los contadores locales para poder actualizar la UI
-    // sin esperar a recargar el post completo del servidor
     _likesCount = widget.post.likesCount;
     _dislikesCount = widget.post.dislikesCount;
     _currentReaction = widget.post.currentReaction ?? 'NONE';
+    _approvedCount = widget.post.approvedCount;
+    _notApprovedCount = widget.post.notApprovedCount;
+    _currentVerdict = widget.post.currentVerdict ?? 'NONE';
   }
 
   Future<void> _handleLike() async {
@@ -60,7 +67,30 @@ class _PostCardState extends State<PostCard> {
     } catch (_) {}
   }
 
-  // Comparte el post con otras apps usando el paquete share_plus
+  Future<void> _handleApprove() async {
+    try {
+      final reaction = await PostService.approvePost(widget.post.id);
+      if (!mounted) return;
+      setState(() {
+        _approvedCount = reaction.approvedCount;
+        _notApprovedCount = reaction.notApprovedCount;
+        _currentVerdict = reaction.currentVerdict;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _handleNotApprove() async {
+    try {
+      final reaction = await PostService.notApprovePost(widget.post.id);
+      if (!mounted) return;
+      setState(() {
+        _approvedCount = reaction.approvedCount;
+        _notApprovedCount = reaction.notApprovedCount;
+        _currentVerdict = reaction.currentVerdict;
+      });
+    } catch (_) {}
+  }
+
   void _handleShare() {
     final text = 'Mira este reto que he completado en GoDare!\n'
         '${widget.post.mediaUrl ?? ''}';
@@ -78,6 +108,7 @@ class _PostCardState extends State<PostCard> {
           _buildHeader(context),
           _buildMedia(),
           _buildActions(),
+          _buildVerdictBar(),
           _buildFooter(),
         ],
       ),
@@ -120,7 +151,6 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  // Badge que identifica el post como un reto fitness
   Widget _buildTypeBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -139,9 +169,6 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  // Muestra el texto del reto y el video/imagen grabado por el usuario.
-  // - Vídeo: envuelto en HeartOverlay (doble tap → like + animación corazón)
-  // - Imagen: usa PostImageView (doble tap → like, tap → zoom fullscreen)
   Widget _buildMedia() {
     final hasMedia =
         widget.post.mediaUrl != null && widget.post.mediaUrl!.isNotEmpty;
@@ -154,7 +181,6 @@ class _PostCardState extends State<PostCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Texto del reto que completó el usuario — siempre visible
         if (widget.post.textResponse != null &&
             widget.post.textResponse!.isNotEmpty)
           Container(
@@ -181,10 +207,8 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
 
-        // Vídeo o imagen adjunta al post
         if (hasMedia)
           isVideo
-          // Vídeo: HeartOverlay permite doble-tap para dar like
               ? HeartOverlay(
             onDoubleTap: _handleLike,
             child: SizedBox(
@@ -193,7 +217,6 @@ class _PostCardState extends State<PostCard> {
               child: VideoPlayerScreen(videoUrl: widget.post.mediaUrl!),
             ),
           )
-          // Imagen: PostImageView gestiona doble-tap (like) y tap (zoom)
               : PostImageView(
             imageUrl: widget.post.mediaUrl!,
             onDoubleTap: _handleLike,
@@ -235,7 +258,7 @@ class _PostCardState extends State<PostCard> {
           Text('$_dislikesCount', style: const TextStyle(fontSize: 13)),
           const SizedBox(width: 4),
 
-          // Comentarios — abre el detalle del post
+          // Comentarios
           GestureDetector(
             onTap: () => Navigator.pushNamed(
               context,
@@ -256,17 +279,131 @@ class _PostCardState extends State<PostCard> {
 
           const Spacer(),
 
-          // Reportar contenido inapropiado
+          // Reportar
           IconButton(
             onPressed: () => _showReportModal(context),
             icon: Icon(Icons.flag_outlined,
                 color: Colors.grey.shade400, size: 20),
           ),
 
-          // Compartir en otras apps
+          // Compartir
           IconButton(
             onPressed: _handleShare,
             icon: const Icon(Icons.share_outlined, color: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Barra de veredicto: ¿el reto fue realmente superado?
+  // Aparece debajo de like/dislike con dos botones de texto compactos.
+  Widget _buildVerdictBar() {
+    final bool votedApproved = _currentVerdict == 'APPROVED';
+    final bool votedNotApproved = _currentVerdict == 'NOT_APPROVED';
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      child: Row(
+        children: [
+          // Etiqueta
+          Text(
+            '¿Reto superado?',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          // Botón ✓ Superado
+          GestureDetector(
+            onTap: _handleApprove,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: votedApproved
+                    ? Colors.green.shade600
+                    : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: votedApproved
+                      ? Colors.green.shade600
+                      : Colors.grey.shade300,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 14,
+                    color:
+                    votedApproved ? Colors.white : Colors.green.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Superado  $_approvedCount',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: votedApproved
+                          ? Colors.white
+                          : Colors.green.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Botón ✗ No superado
+          GestureDetector(
+            onTap: _handleNotApprove,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: votedNotApproved
+                    ? Colors.red.shade600
+                    : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: votedNotApproved
+                      ? Colors.red.shade600
+                      : Colors.grey.shade300,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.cancel_outlined,
+                    size: 14,
+                    color: votedNotApproved
+                        ? Colors.white
+                        : Colors.red.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'No superado  $_notApprovedCount',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: votedNotApproved
+                          ? Colors.white
+                          : Colors.red.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -288,7 +425,6 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  // Muestra la fecha del post en formato relativo (hace X min/h/d)
   Widget _buildFooter() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
