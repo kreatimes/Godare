@@ -72,7 +72,6 @@ class _UserProfilePageState extends State<UserProfilePage>
         final results = await Future.wait([
           UserService.getMyProfile(),
           MyChallengesService.getMyChallenges(state: 'PASSED'),
-          // state=EXPIRED devuelve EXPIRED + FAILED_BY_VOTE desde el backend
           MyChallengesService.getMyChallenges(state: 'EXPIRED'),
           PostService.getUserComments(myId),
         ]);
@@ -108,7 +107,6 @@ class _UserProfilePageState extends State<UserProfilePage>
         try {
           final results = await Future.wait([
             MyChallengesService.getUserChallenges(targetId, state: 'PASSED'),
-            // state=EXPIRED devuelve EXPIRED + FAILED_BY_VOTE desde el backend
             MyChallengesService.getUserChallenges(targetId, state: 'EXPIRED'),
             PostService.getUserComments(targetId),
           ]);
@@ -184,18 +182,21 @@ class _UserProfilePageState extends State<UserProfilePage>
           ? const Center(
           child: Text('No se pudo cargar el perfil',
               style: TextStyle(color: Colors.grey)))
-          : RefreshIndicator(
-        onRefresh: _fetchAll,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildStats(),
-              _buildChallengesSection(),
-              _buildCommentsSection(),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
-            ],
+          : SafeArea(
+        top: false, // AppBar already handles top
+        child: RefreshIndicator(
+          onRefresh: _fetchAll,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildStats(),
+                _buildChallengesSection(),
+                _buildCommentsSection(),
+                SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -442,8 +443,6 @@ class _UserProfilePageState extends State<UserProfilePage>
               _buildLegendDot(Colors.green, 'Completado'),
               const SizedBox(width: 12),
               _buildLegendDot(Colors.red, 'Fallado'),
-              const SizedBox(width: 12),
-              _buildLegendDot(Colors.orange, 'Rechazado'),
             ],
           ),
         ),
@@ -486,7 +485,7 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  // Sección de comentarios
+  // Sección de comentarios — cada uno es tappable y lleva al post donde se escribió
   Widget _buildCommentsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,7 +534,7 @@ class _UserProfilePageState extends State<UserProfilePage>
 }
 
 // ---------------------------------------------------------------------------
-// Tarjeta de reto — completado (verde) / fallado por tiempo (rojo) / rechazado (naranja)
+// Tarjeta de reto — completado (verde, tappable al post) / fallado (rojo)
 // ---------------------------------------------------------------------------
 class _ChallengeProfileCard extends StatefulWidget {
   final UserChallenge challenge;
@@ -551,11 +550,11 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
 
   Future<void> _handleTap() async {
     if (!widget.challenge.isCompleted) {
-      final msg = widget.challenge.isFailedByVote
-          ? 'La comunidad votó que este reto no fue superado'
-          : 'Este reto fue fallado, no tiene post en el feed';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg), duration: const Duration(seconds: 2)),
+        const SnackBar(
+          content: Text('Este reto fue fallado, no tiene post en el feed'),
+          duration: Duration(seconds: 2),
+        ),
       );
       return;
     }
@@ -581,24 +580,11 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
   @override
   Widget build(BuildContext context) {
     final isCompleted = widget.challenge.isCompleted;
-    final isRejected = widget.challenge.isFailedByVote;
-
-    // Colores: verde = completado, naranja = rechazado por la comunidad, rojo = caducado
-    final borderColor = isCompleted
-        ? Colors.green
-        : isRejected
-        ? Colors.orange
-        : Colors.red;
-
-    final badgeLabel = isCompleted
-        ? 'Completado'
-        : widget.challenge.failedLabel;
-
-    final badgeIcon = isCompleted
-        ? Icons.check_circle_outline
-        : isRejected
-        ? Icons.thumb_down_outlined
-        : Icons.cancel_outlined;
+    final borderColor = isCompleted ? Colors.green : Colors.red;
+    final badgeColor = isCompleted ? Colors.green : Colors.red;
+    final badgeLabel = isCompleted ? 'Completado' : 'Fallado';
+    final badgeIcon =
+    isCompleted ? Icons.check_circle_outline : Icons.cancel_outlined;
 
     return GestureDetector(
       onTap: _handleTap,
@@ -616,24 +602,22 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
             children: [
               Row(
                 children: [
-                  // Badge de estado
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: borderColor.withOpacity(0.12),
+                      color: badgeColor.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border:
-                      Border.all(color: borderColor.withOpacity(0.4)),
+                      border: Border.all(color: badgeColor.withOpacity(0.4)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(badgeIcon, color: borderColor, size: 13),
+                        Icon(badgeIcon, color: badgeColor, size: 13),
                         const SizedBox(width: 4),
                         Text(badgeLabel,
                             style: TextStyle(
-                                color: borderColor,
+                                color: badgeColor,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold)),
                       ],
@@ -683,15 +667,6 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
               Text(widget.challenge.challengeQuestion,
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.w600)),
-              // Subtítulo explicativo solo para retos rechazados por la comunidad
-              if (isRejected && widget.challenge.failedSubtitle.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  widget.challenge.failedSubtitle,
-                  style: TextStyle(
-                      fontSize: 12, color: Colors.orange.shade700),
-                ),
-              ],
               if (widget.challenge.finalScore > 0) ...[
                 const SizedBox(height: 8),
                 Row(
@@ -703,31 +678,6 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
                             fontSize: 12,
                             color: Colors.amber,
                             fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ],
-              // Contadores de veredicto: visibles siempre que haya al menos un voto
-              if (widget.challenge.hasVerdictVotes) ...[
-                const SizedBox(height: 10),
-                const Divider(height: 1, thickness: 0.5),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    // ✓ Superado
-                    _VerdictCounter(
-                      icon: Icons.check_circle_outline,
-                      color: Colors.green,
-                      count: widget.challenge.approvedCount,
-                      label: 'Superado',
-                    ),
-                    const SizedBox(width: 16),
-                    // ✗ No superado
-                    _VerdictCounter(
-                      icon: Icons.cancel_outlined,
-                      color: Colors.red,
-                      count: widget.challenge.notApprovedCount,
-                      label: 'No superado',
-                    ),
                   ],
                 ),
               ],
@@ -745,47 +695,6 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
     if (diff.inDays == 1) return 'Ayer';
     if (diff.inDays < 7) return 'Hace ${diff.inDays} días';
     return '${date.day}/${date.month}/${date.year}';
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Contador individual de veredicto (✓ Superado / ✗ No superado)
-// ---------------------------------------------------------------------------
-class _VerdictCounter extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final int count;
-  final String label;
-
-  const _VerdictCounter({
-    required this.icon,
-    required this.color,
-    required this.count,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 14),
-        const SizedBox(width: 4),
-        Text(
-          '$count',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-        ),
-      ],
-    );
   }
 }
 
@@ -817,6 +726,7 @@ class _CommentProfileCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Icono de comentario
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
@@ -831,6 +741,7 @@ class _CommentProfileCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Texto del comentario
                     Text(
                       comment.commentText,
                       style: const TextStyle(
@@ -839,6 +750,7 @@ class _CommentProfileCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
+                    // Fecha + likes
                     Row(
                       children: [
                         Text(
@@ -853,8 +765,7 @@ class _CommentProfileCard extends StatelessWidget {
                           const SizedBox(width: 3),
                           Text('${comment.likesCount}',
                               style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade500)),
+                                  fontSize: 11, color: Colors.grey.shade500)),
                         ],
                       ],
                     ),
@@ -862,6 +773,7 @@ class _CommentProfileCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
+              // Flecha indicando que es navegable
               Icon(Icons.arrow_forward_ios,
                   size: 13, color: Colors.grey.shade400),
             ],

@@ -227,8 +227,9 @@ class _PostCardState extends State<PostCard> {
 
   // Barra de acciones: like, dislike, comentarios, reportar y compartir
   Widget _buildActions() {
+    final double hPad = MediaQuery.of(context).padding.right;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.only(left: 8, right: hPad + 8, top: 4, bottom: 4),
       child: Row(
         children: [
           // Like
@@ -302,8 +303,9 @@ class _PostCardState extends State<PostCard> {
     final bool votedApproved = _currentVerdict == 'APPROVED';
     final bool votedNotApproved = _currentVerdict == 'NOT_APPROVED';
 
+    final double hPad = MediaQuery.of(context).padding.right;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      padding: EdgeInsets.fromLTRB(12, 0, hPad + 12, 6),
       child: Row(
         children: [
           // Etiqueta
@@ -426,8 +428,9 @@ class _PostCardState extends State<PostCard> {
   }
 
   Widget _buildFooter() {
+    final double hPad = MediaQuery.of(context).padding.right;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      padding: EdgeInsets.fromLTRB(12, 0, hPad + 12, 12),
       child: Text(
         _formatDate(widget.post.createdAt),
         style: TextStyle(fontSize: 12, color: Colors.grey.shade500),

@@ -33,10 +33,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       );
       await _controller.initialize();
       if (!mounted) return;
-
-      // Detectar cuando el vídeo llega al final
       _controller.addListener(_onVideoProgress);
-
       setState(() => _isInitialized = true);
     } catch (_) {
       if (!mounted) return;
@@ -63,7 +60,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   void _togglePlay() {
     if (_isFinished) {
-      // Reiniciar y reproducir desde el principio
       _controller.seekTo(Duration.zero);
       _controller.play();
       setState(() => _isFinished = false);
@@ -76,11 +72,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   Future<void> _openFullscreen() async {
     if (_controller.value.isPlaying) _controller.pause();
-
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => _FullscreenVideoPage(videoUrl: widget.videoUrl),
     ));
-
     if (!mounted) return;
     setState(() {});
   }
@@ -89,7 +83,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     if (_hasError) {
       return Container(
-        height: 400,
+        height: 300,
         color: Colors.black,
         child: const Center(
           child: Icon(Icons.error_outline, color: Colors.white, size: 48),
@@ -99,18 +93,22 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     if (!_isInitialized) {
       return Container(
-        height: 400,
+        height: 300,
         color: Colors.black,
         child: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    return SizedBox(
-      height: 400,
-      width: double.infinity,
+    // En el feed el vídeo usa AspectRatio en lugar de altura fija para que en
+    // landscape no ocupe toda la pantalla. Se limita a un máximo de 16:9.
+    final double videoAspect = _controller.value.aspectRatio;
+    final double clampedAspect = videoAspect.clamp(0.5, 16 / 9);
+
+    return AspectRatio(
+      aspectRatio: clampedAspect,
       child: Stack(
         children: [
-          // Vídeo tappable para play/pause/replay
+          // Vídeo
           Positioned.fill(
             child: GestureDetector(
               onTap: _togglePlay,
@@ -129,7 +127,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ),
           ),
 
-          // Overlay central de replay cuando el vídeo acaba
+          // Overlay de replay al terminar
           if (_isFinished)
             Center(
               child: GestureDetector(
@@ -142,11 +140,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white70, width: 2),
                   ),
-                  child: const Icon(
-                    Icons.replay,
-                    color: Colors.white,
-                    size: 36,
-                  ),
+                  child: const Icon(Icons.replay, color: Colors.white, size: 36),
                 ),
               ),
             ),
@@ -156,13 +150,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: _buildControls(),
+            child: _buildControls(context),
           ),
 
-          // Botón de pantalla completa — esquina superior derecha
+          // Botón pantalla completa — esquina superior derecha con safe area
           Positioned(
             top: 4,
-            right: 4,
+            right: MediaQuery.of(context).padding.right + 4,
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -174,11 +168,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     color: Colors.black45,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.fullscreen,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+                  child: const Icon(Icons.fullscreen, color: Colors.white, size: 22),
                 ),
               ),
             ),
@@ -188,16 +178,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     );
   }
 
-  Widget _buildControls() {
+  Widget _buildControls(BuildContext context) {
+    // El padding derecho cubre los botones táctiles del móvil en landscape
+    final double rightPad = MediaQuery.of(context).padding.right + 8;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.5),
-          ],
+          colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
         ),
       ),
       child: Row(
@@ -216,7 +206,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           Expanded(
             child: _VideoProgressBar(controller: _controller),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: rightPad),
         ],
       ),
     );
@@ -304,14 +294,10 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
 
   Future<void> _initPlayer() async {
     try {
-      _controller = VideoPlayerController.networkUrl(
-        Uri.parse(widget.videoUrl),
-      );
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
       await _controller.initialize();
       if (!mounted) return;
-
       _controller.addListener(_onVideoProgress);
-
       setState(() => _isInitialized = true);
       _controller.play();
     } catch (_) {
@@ -353,18 +339,19 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final padding = MediaQuery.of(context).padding;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Vídeo tappable
+          // Vídeo centrado
           Positioned.fill(
             child: GestureDetector(
               onTap: _togglePlay,
               child: Center(
                 child: _hasError
-                    ? const Icon(Icons.error_outline,
-                    color: Colors.white, size: 64)
+                    ? const Icon(Icons.error_outline, color: Colors.white, size: 64)
                     : !_isInitialized
                     ? const CircularProgressIndicator()
                     : AspectRatio(
@@ -375,7 +362,7 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
             ),
           ),
 
-          // Overlay central de replay cuando el vídeo acaba
+          // Overlay de replay al terminar
           if (_isFinished && _isInitialized)
             Center(
               child: GestureDetector(
@@ -388,31 +375,29 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white70, width: 2),
                   ),
-                  child: const Icon(
-                    Icons.replay,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                  child: const Icon(Icons.replay, color: Colors.white, size: 40),
                 ),
               ),
             ),
 
-          // Controles en la parte inferior
+          // Controles en la parte inferior con safe area completa
           if (_isInitialized)
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
               child: Container(
-                padding: const EdgeInsets.only(bottom: 16),
+                // El padding bottom e horizontal cubren los gestos/botones del sistema
+                padding: EdgeInsets.only(
+                  bottom: padding.bottom + 8,
+                  left: padding.left,
+                  right: padding.right + 8,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
                   ),
                 ),
                 child: Row(
@@ -429,19 +414,17 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
                       ),
                       onPressed: _togglePlay,
                     ),
-                    Expanded(
-                      child: _VideoProgressBar(controller: _controller),
-                    ),
+                    Expanded(child: _VideoProgressBar(controller: _controller)),
                     const SizedBox(width: 8),
                   ],
                 ),
               ),
             ),
 
-          // Botón de cerrar — esquina superior izquierda
+          // Botón cerrar — respeta safe area en landscape (padding.left para notch/cámara)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 4,
-            left: 4,
+            top: padding.top + 4,
+            left: padding.left + 4,
             child: Material(
               color: Colors.transparent,
               child: InkWell(

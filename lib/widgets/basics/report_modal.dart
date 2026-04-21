@@ -40,10 +40,8 @@ class _ReportModalState extends State<ReportModal> {
         type: widget.type,
         reason: _selectedReason!,
       );
-
       if (!mounted) return;
       Navigator.pop(context);
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Reporte enviado. Gracias por ayudarnos a mejorar.'),
@@ -53,11 +51,9 @@ class _ReportModalState extends State<ReportModal> {
     } on ReportException catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
-
       final msg = e.message == 'ALREADY_REPORTED'
           ? 'Ya has reportado este contenido anteriormente'
           : 'Error al enviar el reporte. Inténtalo de nuevo.';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(msg)),
       );
@@ -68,12 +64,15 @@ class _ReportModalState extends State<ReportModal> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaPadding = MediaQuery.of(context).padding;
+
     return Padding(
       padding: EdgeInsets.only(
         top: 12,
-        left: 20,
-        right: 20,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 24,
+        // Suma el padding lateral del sistema (notch / botones táctiles en landscape)
+        left:  mediaPadding.left  + 20,
+        right: mediaPadding.right + 20,
+        bottom: mediaPadding.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -81,7 +80,8 @@ class _ReportModalState extends State<ReportModal> {
           // Handle
           Center(
             child: Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(2),
@@ -97,8 +97,7 @@ class _ReportModalState extends State<ReportModal> {
               const SizedBox(width: 8),
               Text(
                 'Reportar ${_typeLabel()}',
-                style: const TextStyle(
-                    fontSize: 17, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               IconButton(
@@ -122,8 +121,7 @@ class _ReportModalState extends State<ReportModal> {
             value: reason.code,
             groupValue: _selectedReason,
             onChanged: (val) => setState(() => _selectedReason = val),
-            title: Text(reason.label,
-                style: const TextStyle(fontSize: 14)),
+            title: Text(reason.label, style: const TextStyle(fontSize: 14)),
             activeColor: Colors.red,
             contentPadding: EdgeInsets.zero,
             dense: true,
@@ -135,9 +133,7 @@ class _ReportModalState extends State<ReportModal> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: (_selectedReason == null || _isLoading)
-                  ? null
-                  : _sendReport,
+              onPressed: (_selectedReason == null || _isLoading) ? null : _sendReport,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -148,7 +144,8 @@ class _ReportModalState extends State<ReportModal> {
               ),
               child: _isLoading
                   ? const SizedBox(
-                height: 20, width: 20,
+                height: 20,
+                width: 20,
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white),
               )
@@ -162,9 +159,9 @@ class _ReportModalState extends State<ReportModal> {
 
   String _typeLabel() {
     switch (widget.type) {
-      case 'USER': return 'usuario';
+      case 'USER':    return 'usuario';
       case 'COMMENT': return 'comentario';
-      default: return 'post';
+      default:        return 'post';
     }
   }
 }
