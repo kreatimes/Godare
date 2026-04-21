@@ -9,10 +9,16 @@ import 'package:godare/providers/user_provider.dart';
 import 'package:godare/services/daily_service.dart';
 import 'package:godare/common/my_routers.dart';
 import 'package:godare/values/colors_app.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/.env');
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(await _initializeApp());
 }
 
