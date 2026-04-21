@@ -105,7 +105,7 @@ class MyDrawer extends StatelessWidget {
                 title: 'POLÍTICA DE PRIVACIDAD',
                 onTap: () => _showModalHTML(
                   context,
-                  'https://godare.app/privacyPolicy.html',
+                  'https://godare/privacyPolicy.html',
                 ),
               ),
               _tile(

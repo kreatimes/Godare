@@ -137,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 20),
           PrivacyPolicyCheckbox(
             labelText: 'Acepto la ',
-            privacyPolicyUrl: 'https://godare.app/privacyPolicy.html',
+            privacyPolicyUrl: 'https://godare/privacyPolicy.html',
             onChanged: (value) =>
                 setState(() => _privacyAccepted = value ?? false),
           ),
