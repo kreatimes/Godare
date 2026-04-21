@@ -5,8 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../core/api_client.dart';
 
 /// Servicio para subir archivos a Cloudinary.
-/// Usa upload sin firma (unsigned) con un preset público.
-/// Configurar en Cloudinary: Settings → Upload → Upload presets → Unsigned
 class CloudinaryService {
 
   // TODO: sustituir por tus credenciales de Cloudinary
@@ -81,7 +79,7 @@ class CloudinaryService {
         queryParameters: {'imageUrl': imageUrl},
       );
     } catch (e) {
-      // Error no crítico — la imagen queda huérfana pero no bloqueamos el flujo
+      // Error no crítico — la imagen queda huérfana pero no se bloquea
       print('Error borrando imagen anterior: $e');
     }
   }

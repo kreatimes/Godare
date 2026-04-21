@@ -2,12 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:godare/core/api_client.dart';
 import 'package:godare/models/user_challenge.dart';
 
-// Servicio que gestiona los retos del usuario autenticado.
-// Se encarga de obtener, abrir, completar y transferir retos.
+// Servicio que gestiona los retos del usuario
 class MyChallengesService {
 
   // Devuelve la lista de retos del usuario.
-  // El parametro state filtra por estado: OPEN, PASSED, EXPIRED, TRANSFERRED, CLOSED
   static Future<List<UserChallenge>> getMyChallenges({String? state}) async {
     try {
       final response = await ApiClient.instance.get(
@@ -41,7 +39,7 @@ class MyChallengesService {
     }
   }
 
-  // Convierte un DioException en una excepcion propia con mensaje legible
+  // Convierte un DioException en una excepcion propia con mensaje
   static MyChallengesException _handleError(DioException e) {
     final message = e.response?.data?['message'] as String?;
     switch (e.response?.statusCode) {
@@ -70,7 +68,6 @@ class MyChallengesService {
   }
 
   // Abre un reto que estaba cerrado (CLOSED -> OPEN).
-  // El reto pasa a CLOSED cuando llega pero el usuario no lo ha visto todavia.
   static Future<void> openChallenge({required String id}) async {
     try {
       await ApiClient.instance.patch('/api/challenges/$id/open');
@@ -80,7 +77,6 @@ class MyChallengesService {
   }
 
   // Transfiere un reto a otro usuario.
-  // Solo se puede transferir a usuarios a los que el usuario sigue.
   static Future<void> transferChallenge({
     required String challengeId,
     required String targetUserId,
@@ -95,8 +91,7 @@ class MyChallengesService {
   }
 }
 
-// Excepcion que lanzamos cuando algo falla en las operaciones de retos.
-// Usamos una clase propia para poder mostrar mensajes de error controlados en la UI.
+// Excepcion que lanza cuando algo falla en las operaciones de retos
 class MyChallengesException implements Exception {
   final String message;
   const MyChallengesException(this.message);

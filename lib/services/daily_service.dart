@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:godare/core/api_client.dart';
 import 'package:godare/models/daily_item.dart';
 
-/// Servicio para el reto diario del usuario
+/// Servicio para el reto diario
 class DailyService {
 
   static Future<DailyItem> getMyDaily() async {

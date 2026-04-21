@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:godare/core/api_client.dart';
 import 'package:godare/models/post.dart';
 
-/// Servicio para el feed de posts, reacciones y comentarios
+// Servicio para el feed de posts, reacciones y comentarios
 class PostService {
 
   static Future<FeedResponse> getGlobalFeed({
