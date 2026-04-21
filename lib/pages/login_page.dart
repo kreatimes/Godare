@@ -260,9 +260,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Modal para reenviar el email de verificación
-// ---------------------------------------------------------------------------
 class _ResendVerificationModal extends StatefulWidget {
   final TextEditingController emailController;
   final GlobalKey<FormState> formKey;
@@ -341,8 +339,7 @@ class _ResendVerificationModalState extends State<_ResendVerificationModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Handle
-            Center(
+              Center(
               child: Container(
                 width: 40,
                 height: 4,
@@ -354,8 +351,7 @@ class _ResendVerificationModalState extends State<_ResendVerificationModal> {
             ),
             const SizedBox(height: 20),
 
-            // Título
-            const Text(
+              const Text(
               'Reenviar verificación',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),

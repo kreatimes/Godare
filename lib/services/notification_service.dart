@@ -5,7 +5,6 @@ import 'package:godare/models/notification.dart';
 /// Servicio para las notificaciones del usuario autenticado
 class NotificationService {
 
-  /// Devuelve todas las notificaciones del usuario ordenadas de más reciente a más antigua
   static Future<List<AppNotification>> getMyNotifications() async {
     try {
       final response =
@@ -18,7 +17,6 @@ class NotificationService {
     }
   }
 
-  /// Devuelve el número de notificaciones no leídas
   static Future<int> getUnreadCount() async {
     try {
       final response =
@@ -29,7 +27,6 @@ class NotificationService {
     }
   }
 
-  /// Marca una notificación concreta como leída
   static Future<AppNotification> markAsRead(String notificationId) async {
     try {
       final response = await ApiClient.instance
@@ -40,7 +37,6 @@ class NotificationService {
     }
   }
 
-  /// Marca todas las notificaciones como leídas de una vez
   static Future<void> markAllAsRead() async {
     try {
       await ApiClient.instance.patch('/api/notifications/me/read-all');

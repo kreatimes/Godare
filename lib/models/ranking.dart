@@ -1,4 +1,4 @@
-/// Entrada del ranking — usuario con su posición y puntos
+// Entrada del ranking — usuario con su posición y puntos
 class RankingEntry {
   final String userId;
   final String nick;

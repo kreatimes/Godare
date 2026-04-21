@@ -95,7 +95,6 @@ class PostService {
     }
   }
 
-  /// Devuelve el ID del post vinculado a un reto completado.
   static Future<String> getPostIdByChallenge(String userChallengeId) async {
     try {
       final response = await ApiClient.instance
@@ -106,8 +105,6 @@ class PostService {
     }
   }
 
-  /// Devuelve todos los comentarios escritos por un usuario.
-  /// Cada comentario incluye [postId] para navegar al post original.
   static Future<List<PostComment>> getUserComments(String userId) async {
     try {
       final response =
@@ -140,7 +137,6 @@ class PostService {
     }
   }
 
-  /// Vota que el reto SÍ fue superado
   static Future<PostReaction> approvePost(String postId) async {
     try {
       final response =
@@ -151,7 +147,6 @@ class PostService {
     }
   }
 
-  /// Vota que el reto NO fue superado
   static Future<PostReaction> notApprovePost(String postId) async {
     try {
       final response =

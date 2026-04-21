@@ -232,7 +232,6 @@ class _PostCardState extends State<PostCard> {
       padding: EdgeInsets.only(left: 8, right: hPad + 8, top: 4, bottom: 4),
       child: Row(
         children: [
-          // Like
           IconButton(
             onPressed: _handleLike,
             icon: Icon(
@@ -245,7 +244,6 @@ class _PostCardState extends State<PostCard> {
           Text('$_likesCount', style: const TextStyle(fontSize: 13)),
           const SizedBox(width: 4),
 
-          // Dislike
           IconButton(
             onPressed: _handleDislike,
             icon: Icon(
@@ -259,7 +257,6 @@ class _PostCardState extends State<PostCard> {
           Text('$_dislikesCount', style: const TextStyle(fontSize: 13)),
           const SizedBox(width: 4),
 
-          // Comentarios
           GestureDetector(
             onTap: () => Navigator.pushNamed(
               context,
@@ -280,14 +277,12 @@ class _PostCardState extends State<PostCard> {
 
           const Spacer(),
 
-          // Reportar
           IconButton(
             onPressed: () => _showReportModal(context),
             icon: Icon(Icons.flag_outlined,
                 color: Colors.grey.shade400, size: 20),
           ),
 
-          // Compartir
           IconButton(
             onPressed: _handleShare,
             icon: const Icon(Icons.share_outlined, color: Colors.black),
@@ -308,7 +303,6 @@ class _PostCardState extends State<PostCard> {
       padding: EdgeInsets.fromLTRB(12, 0, hPad + 12, 6),
       child: Row(
         children: [
-          // Etiqueta
           Text(
             '¿Reto superado?',
             style: TextStyle(

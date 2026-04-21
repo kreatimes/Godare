@@ -1,6 +1,5 @@
-// Modelos de usuario de la aplicacion GoDare.
-// Separamos MyProfile (usuario autenticado) de UserProfile (perfil publico)
-// porque el propio usuario ve datos extra como el email o las monedas.
+// modelos de usuario
+// MyProfile = autenticado, UserProfile = publico
 
 // Perfil completo del usuario autenticado — respuesta de /api/users/me
 class MyProfile {

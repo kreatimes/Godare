@@ -414,7 +414,6 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  // Sección de retos: completados (verde) y fallados (rojo)
   Widget _buildChallengesSection() {
     final total = _completedChallenges.length + _failedChallenges.length;
 
@@ -485,7 +484,6 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  // Sección de comentarios — cada uno es tappable y lleva al post donde se escribió
   Widget _buildCommentsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,9 +531,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   }
 }
 
-// ---------------------------------------------------------------------------
 // Tarjeta de reto — completado (verde, tappable al post) / fallado (rojo)
-// ---------------------------------------------------------------------------
 class _ChallengeProfileCard extends StatefulWidget {
   final UserChallenge challenge;
 
@@ -698,9 +694,7 @@ class _ChallengeProfileCardState extends State<_ChallengeProfileCard> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Tarjeta de comentario en el perfil — tap navega al post donde fue escrito
-// ---------------------------------------------------------------------------
 class _CommentProfileCard extends StatelessWidget {
   final PostComment comment;
 

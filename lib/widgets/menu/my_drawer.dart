@@ -252,9 +252,7 @@ class MyDrawer extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Dialog de confirmación con contraseña
-// ---------------------------------------------------------------------------
 
 class _DeleteAccountPasswordDialog extends StatefulWidget {
   final TextEditingController controller;

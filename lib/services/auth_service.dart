@@ -6,7 +6,6 @@ import 'package:godare/models/auth.dart';
 /// Servicio de autenticación — registro, login, verificación y contraseña
 class AuthService {
 
-  /// Registra un nuevo usuario.
   static Future<void> register(RegisterRequest request) async {
     try {
       await ApiClient.instance.post(
@@ -18,7 +17,6 @@ class AuthService {
     }
   }
 
-  /// Inicia sesión con email o nick + contraseña.
   static Future<JwtResponse> login(LoginRequest request) async {
     try {
       final response = await ApiClient.instance.post(
@@ -34,7 +32,6 @@ class AuthService {
     }
   }
 
-  /// Verifica la cuenta con el token recibido por email.
   static Future<void> verifyAccount(String token) async {
     try {
       await ApiClient.instance.get(
@@ -46,7 +43,6 @@ class AuthService {
     }
   }
 
-  /// Solicita el envío del email de recuperación de contraseña.
   static Future<void> forgotPassword(ForgotPasswordRequest request) async {
     try {
       await ApiClient.instance.post(
@@ -58,7 +54,6 @@ class AuthService {
     }
   }
 
-  /// Resetea la contraseña usando el token del email.
   static Future<void> resetPassword(ResetPasswordRequest request) async {
     try {
       await ApiClient.instance.post(
@@ -70,7 +65,6 @@ class AuthService {
     }
   }
 
-  /// Verifica la contraseña del usuario autenticado
   static Future<bool> verifyPassword(String password) async {
     try {
       final response = await ApiClient.instance.post(
@@ -83,7 +77,6 @@ class AuthService {
     }
   }
 
-  /// Cambia la contraseña del usuario autenticado
   static Future<void> changePassword(ChangePasswordRequest request) async {
     try {
       await ApiClient.instance.patch(
@@ -95,10 +88,6 @@ class AuthService {
     }
   }
 
-  /// Reenvía el email de verificación de cuenta.
-  /// Lanza [EmailNotFoundForVerificationException] si el email no existe.
-  /// Lanza [EmailAlreadyVerifiedException] si la cuenta ya está verificada.
-  /// Devuelve el email ofuscado si el envío fue exitoso.
   static Future<String> resendVerification(String email) async {
     try {
       final response = await ApiClient.instance.post(
@@ -118,7 +107,6 @@ class AuthService {
     }
   }
 
-  /// Cierra sesión
   static Future<void> logout() async {
     await SecureStorage.clearToken();
     ApiClient.reset();

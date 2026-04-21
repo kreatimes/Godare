@@ -5,7 +5,6 @@ import 'package:godare/models/ranking.dart';
 /// Servicio para los rankings global y de seguidos
 class RankingService {
 
-  /// Ranking global de todos los usuarios ordenado por puntos
   static Future<List<RankingEntry>> getGlobalRanking() async {
     try {
       final response = await ApiClient.instance.get('/api/ranking/global');
@@ -17,7 +16,6 @@ class RankingService {
     }
   }
 
-  /// Ranking solo entre los usuarios que sigue el usuario autenticado
   static Future<List<RankingEntry>> getFollowingRanking() async {
     try {
       final response = await ApiClient.instance.get('/api/ranking/following');

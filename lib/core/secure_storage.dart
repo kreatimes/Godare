@@ -1,7 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Gestiona el almacenamiento seguro del JWT en el dispositivo.
-/// Usa flutter_secure_storage (Keychain en iOS, EncryptedSharedPreferences en Android).
+// Almacenamiento seguro del JWT
 class SecureStorage {
   static const _storage = FlutterSecureStorage();
   static const _keyToken = 'jwt_token';

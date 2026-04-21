@@ -58,6 +58,6 @@ class UserChallenge {
   String get failedLabel    => isFailedByVote ? 'Rechazado' : 'Fallado';
   String get failedSubtitle => isFailedByVote ? 'La comunidad votó que no fue superado' : '';
 
-  // Muestra los contadores si hay al menos un voto registrado
+  // true si hay votos
   bool get hasVerdictVotes => approvedCount > 0 || notApprovedCount > 0;
 }

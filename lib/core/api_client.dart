@@ -26,7 +26,7 @@ class ApiClient {
       ),
     );
 
-    // Interceptor: añade el JWT en el header Authorization de forma automática
+    // añade el JWT a todas las peticiones
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -54,7 +54,7 @@ class ApiClient {
     return dio;
   }
 
-  /// Resetea la instancia — útil tras logout para limpiar estado
+  // reset al hacer logout
   static void reset() {
     _instance = null;
   }

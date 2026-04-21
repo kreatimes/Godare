@@ -20,7 +20,7 @@ class PackStoreCard extends StatefulWidget {
 class _PackStoreCardState extends State<PackStoreCard> {
   bool _isLoading = false;
 
-  // Muestra dialogo de confirmacion y procesa la compra si acepta
+  // confirmacion antes de comprar
   Future<void> _handleBuy() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -77,7 +77,7 @@ class _PackStoreCardState extends State<PackStoreCard> {
 
       if (!mounted) return;
 
-      // Recargar el perfil para actualizar el saldo de coins en la UI
+      // actualizar coins
       await context.read<UserProvider>().loadProfile();
 
       if (!mounted) return;
@@ -133,7 +133,6 @@ class _PackStoreCardState extends State<PackStoreCard> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Imagen local del pack según precio
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
@@ -147,12 +146,10 @@ class _PackStoreCardState extends State<PackStoreCard> {
 
             const SizedBox(width: 16),
 
-            // Informacion del pack
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Badge de tipo
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 3),
@@ -172,7 +169,6 @@ class _PackStoreCardState extends State<PackStoreCard> {
                   ),
                   const SizedBox(height: 6),
 
-                  // Nombre del pack
                   Text(
                     widget.pack.name,
                     style: const TextStyle(
@@ -182,7 +178,6 @@ class _PackStoreCardState extends State<PackStoreCard> {
                   ),
                   const SizedBox(height: 4),
 
-                  // Cantidad de retos
                   Text(
                     '${widget.pack.quantity} retos',
                     style: TextStyle(
@@ -196,7 +191,6 @@ class _PackStoreCardState extends State<PackStoreCard> {
 
             const SizedBox(width: 12),
 
-            // Precio y boton de compra
             Column(
               children: [
                 Row(

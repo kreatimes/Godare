@@ -1,4 +1,4 @@
-/// Petición de registro — debe coincidir con RegisterRequest del back
+// Petición de registro — debe coincidir con RegisterRequest del back
 class RegisterRequest {
   final String nick;
   final String name;
@@ -23,7 +23,7 @@ class RegisterRequest {
   };
 }
 
-/// Petición de login — permite email o nick
+// Petición de login — permite email o nick
 class LoginRequest {
   final String emailOrNick;
   final String password;
@@ -39,7 +39,7 @@ class LoginRequest {
   };
 }
 
-/// Respuesta del login con el JWT y datos básicos del usuario
+// Respuesta del login con el JWT y datos básicos del usuario
 class JwtResponse {
   final String token;
   final String type;
@@ -75,7 +75,7 @@ class JwtResponse {
   }
 }
 
-/// Petición de recuperación de contraseña
+// Petición de recuperación de contraseña
 class ForgotPasswordRequest {
   final String email;
 
@@ -84,7 +84,7 @@ class ForgotPasswordRequest {
   Map<String, dynamic> toJson() => {'email': email};
 }
 
-/// Petición de reset de contraseña con token
+// Petición de reset de contraseña con token
 class ResetPasswordRequest {
   final String token;
   final String newPassword;
@@ -100,7 +100,7 @@ class ResetPasswordRequest {
   };
 }
 
-/// Petición de cambio de contraseña con sesión activa
+// Petición de cambio de contraseña con sesión activa
 class ChangePasswordRequest {
   final String currentPassword;
   final String newPassword;

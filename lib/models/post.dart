@@ -58,13 +58,11 @@ class Post {
     );
   }
 
-  // Comprueba si el post corresponde a un reto completado
+  // true si es un dare
   bool get isDare => postType == 'DARE';
 }
 
-// Respuesta del feed con paginacion por cursor.
-// Usamos cursor en lugar de pagina numerada para que el feed no salte
-// si se publican nuevos posts mientras el usuario esta navegando.
+// Respuesta del feed paginada por cursor
 class FeedResponse {
   final List<Post> posts;
   final String? nextCursorId;
@@ -90,8 +88,7 @@ class FeedResponse {
   }
 }
 
-// Respuesta que devuelve el servidor al reaccionar a un post (like/dislike/veredicto).
-// Devuelve los contadores actualizados para actualizar la UI sin recargar.
+// Respuesta de reaccion a un post
 class PostReaction {
   final String message;
   final int likesCount;

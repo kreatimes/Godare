@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-/// Pantalla de imagen a pantalla completa con zoom (pinch-to-zoom).
+// Pantalla de imagen a pantalla completa con zoom (pinch-to-zoom).
 class FullscreenImageView extends StatelessWidget {
   final String imageUrl;
 

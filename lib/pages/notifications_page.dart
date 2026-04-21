@@ -185,7 +185,6 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  /// Navega a la pantalla relevante según el tipo de notificación
   void _handleNavigation(BuildContext context) {
     final data = notification.data;
 

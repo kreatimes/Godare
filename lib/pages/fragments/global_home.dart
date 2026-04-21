@@ -35,7 +35,6 @@ class _GlobalHomeState extends State<GlobalHome> {
     super.dispose();
   }
 
-  /// Carga la primera página del feed
   Future<void> _fetchPosts() async {
     try {
       final feed = await PostService.getGlobalFeed();
@@ -53,7 +52,6 @@ class _GlobalHomeState extends State<GlobalHome> {
     }
   }
 
-  /// Carga la siguiente página al llegar al final del scroll
   Future<void> _fetchMore() async {
     if (_isLoadingMore || !_hasMore) return;
 
@@ -85,7 +83,6 @@ class _GlobalHomeState extends State<GlobalHome> {
     }
   }
 
-  /// Refresco tirando hacia abajo
   Future<void> _onRefresh() async {
     setState(() {
       _posts = [];

@@ -15,7 +15,6 @@ class CloudinaryService {
 
   static final Dio _dio = Dio();
 
-  /// Sube un archivo de vídeo o imagen y devuelve la URL pública
   static Future<String> uploadFile(File file) async {
     try {
       final formData = FormData.fromMap({
@@ -43,7 +42,6 @@ class CloudinaryService {
     }
   }
 
-  /// Sube una imagen de perfil y devuelve la URL pública
   static Future<String> uploadProfileImage(File file) async {
     try {
       final formData = FormData.fromMap({
@@ -72,8 +70,6 @@ class CloudinaryService {
     }
   }
 
-  /// Borra la imagen de perfil anterior llamando al back
-  /// El back se encarga de hacer la llamada firmada a Cloudinary
   static Future<void> deleteProfileImage(String imageUrl) async {
     const defaultUrl =
         'https://res.cloudinary.com/dfeqlfptc/image/upload/v1774389485/default_profile_k6ojop.png';

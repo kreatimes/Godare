@@ -6,7 +6,7 @@ import 'package:godare/services/user_service.dart';
 import 'package:godare/values/colors_app.dart';
 import 'package:godare/common/my_routers.dart';
 
-/// Tarjeta de un usuario en el ranking.
+// Tarjeta de un usuario en el ranking.
 /// Muestra posición, avatar, nick, rango, puntos y botón de seguir/dejar de seguir.
 /// Al pulsar la tarjeta navega al perfil del usuario.
 class RankingElement extends StatefulWidget {
@@ -71,12 +71,10 @@ class _RankingElementState extends State<RankingElement> {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Posición
               _buildPosition(widget.entry.position),
               const SizedBox(width: 14),
 
-              // Avatar
-              CircleAvatar(
+                  CircleAvatar(
                 radius: 28,
                 backgroundImage: widget.entry.userImageUrl != null
                     ? NetworkImage(widget.entry.userImageUrl!)
@@ -86,7 +84,6 @@ class _RankingElementState extends State<RankingElement> {
               ),
               const SizedBox(width: 14),
 
-              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

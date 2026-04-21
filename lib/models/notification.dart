@@ -1,4 +1,4 @@
-/// Notificación recibida por el usuario
+// Notificación recibida por el usuario
 class AppNotification {
   final String id;
   final String type; // FOLLOW, LIKE_RECEIVED, COMMENT_RECEIVED, RANGE_UP, etc.

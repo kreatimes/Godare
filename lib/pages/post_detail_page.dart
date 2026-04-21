@@ -460,8 +460,7 @@ class _CommentTileState extends State<_CommentTile> {
                   padding: const EdgeInsets.only(left: 4, top: 2),
                   child: Row(
                     children: [
-                      // Like
-                      GestureDetector(
+                                  GestureDetector(
                         onTap: _handleLike,
                         child: Row(
                           children: [
@@ -483,8 +482,7 @@ class _CommentTileState extends State<_CommentTile> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Dislike
-                      GestureDetector(
+                                  GestureDetector(
                         onTap: _handleDislike,
                         child: Row(
                           children: [

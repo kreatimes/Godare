@@ -14,14 +14,13 @@ class UserProvider extends ChangeNotifier {
   String? _error;
   int _unreadNotifications = 0;
 
-  // Getters
   MyProfile? get profile => _profile;
   bool get isLoading => _isLoading;
   String? get error => _error;
   int get unreadNotifications => _unreadNotifications;
   bool get isLoggedIn => _profile != null;
 
-  /// Inicia sesión — guarda el JWT y carga el perfil completo
+  /// Inicia sesión
   Future<bool> login(LoginRequest request) async {
     _setLoading(true);
     try {
@@ -40,7 +39,7 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  /// Carga o recarga el perfil del usuario autenticado desde la API
+  /// Carga el perfil desde la API
   Future<void> loadProfile() async {
     try {
       _profile = await UserService.getMyProfile();
@@ -51,7 +50,7 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  /// Carga el contador de notificaciones no leídas
+  /// Notificaciones no leidas
   Future<void> loadUnreadCount() async {
     try {
       _unreadNotifications = await NotificationService.getUnreadCount();
@@ -59,7 +58,7 @@ class UserProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  /// Actualiza los datos del perfil del usuario con los campos indicados
+  /// Actualiza perfil
   Future<bool> updateProfile({
     String? nick,
     String? name,
@@ -84,13 +83,13 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  /// Actualiza el contador de notificaciones no leídas
+  /// Actualiza contador notifs
   void setUnreadNotifications(int count) {
     _unreadNotifications = count;
     notifyListeners();
   }
 
-  /// Decrementa el contador cuando se lee una notificación
+  /// -1 al leer una notif
   void decrementUnreadNotifications() {
     if (_unreadNotifications > 0) {
       _unreadNotifications--;
@@ -98,13 +97,13 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  /// Resetea el contador cuando se marcan todas como leídas
+  /// Reset contador
   void clearUnreadNotifications() {
     _unreadNotifications = 0;
     notifyListeners();
   }
 
-  /// Cierra sesión — limpia el estado y el JWT
+  /// Logout
   Future<void> logout() async {
     await AuthService.logout();
     _profile = null;

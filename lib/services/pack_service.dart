@@ -5,7 +5,6 @@ import 'package:godare/models/pack_store.dart';
 /// Servicio para la tienda de packs
 class PackService {
 
-  /// Devuelve los packs disponibles en la tienda
   static Future<List<PackStore>> getAvailablePacks() async {
     try {
       final response = await ApiClient.instance.get('/api/packs');
@@ -17,7 +16,6 @@ class PackService {
     }
   }
 
-  /// Compra un pack por su ID
   static Future<PackPurchaseResponse> buyPack(int packId) async {
     try {
       final response = await ApiClient.instance.post('/api/packs/$packId/buy');

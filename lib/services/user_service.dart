@@ -5,7 +5,6 @@ import 'package:godare/models/user.dart';
 /// Servicio para gestión de usuarios, perfil y sistema social (follows)
 class UserService {
 
-  /// Devuelve el perfil completo del usuario autenticado
   static Future<MyProfile> getMyProfile() async {
     try {
       final response = await ApiClient.instance.get('/api/users/me');
@@ -15,7 +14,6 @@ class UserService {
     }
   }
 
-  /// Devuelve el perfil público de cualquier usuario por su ID
   static Future<UserProfile> getUserProfile(String userId) async {
     try {
       final response = await ApiClient.instance.get('/api/users/$userId');
@@ -25,8 +23,6 @@ class UserService {
     }
   }
 
-  /// Actualiza los datos del perfil del usuario autenticado.
-  /// Solo envía los campos que vienen informados.
   static Future<MyProfile> updateMyProfile({
     String? nick,
     String? name,
@@ -50,7 +46,6 @@ class UserService {
     }
   }
 
-  /// Devuelve la lista de seguidores de un usuario
   static Future<List<FollowUser>> getFollowers(String userId) async {
     try {
       final response =
@@ -63,7 +58,6 @@ class UserService {
     }
   }
 
-  /// Devuelve la lista de usuarios a los que sigue un usuario
   static Future<List<FollowUser>> getFollowing(String userId) async {
     try {
       final response =
@@ -76,7 +70,6 @@ class UserService {
     }
   }
 
-  /// Sigue a un usuario por su ID
   static Future<void> followUser(String userId) async {
     try {
       await ApiClient.instance.post('/api/users/$userId/follow');
@@ -85,7 +78,6 @@ class UserService {
     }
   }
 
-  /// Deja de seguir a un usuario por su ID
   static Future<void> unfollowUser(String userId) async {
     try {
       await ApiClient.instance.delete('/api/users/$userId/follow');
@@ -94,7 +86,6 @@ class UserService {
     }
   }
 
-  /// Busca usuarios por nick — mínimo 2 caracteres
   static Future<List<FollowUser>> searchUsers(String query) async {
     try {
       final response = await ApiClient.instance.get(
@@ -109,7 +100,6 @@ class UserService {
     }
   }
 
-  /// Elimina la cuenta del usuario autenticado y todos sus datos
   static Future<void> deleteAccount() async {
     try {
       await ApiClient.instance.delete('/api/users/me');

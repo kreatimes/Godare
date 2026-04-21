@@ -10,8 +10,7 @@ import 'package:godare/services/my_challenges_service.dart';
 import 'package:godare/services/user_service.dart';
 import 'package:godare/values/colors_app.dart';
 
-// Tarjeta que muestra un reto fitness del usuario.
-// Puede estar en tres estados visuales: cerrado (candado), pendiente o completado.
+// tarjeta de reto
 class ChallengeCard extends StatelessWidget {
   final UserChallenge challenge;
   final VoidCallback onCompleted;
@@ -24,7 +23,7 @@ class ChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Si el reto esta cerrado mostramos una tarjeta con candado sin revelar el contenido
+    // reto cerrado = candado
     if (challenge.isClosed) return _buildClosedCard(context);
 
     return Card(
@@ -49,7 +48,7 @@ class ChallengeCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Texto del reto
+          
             Text(
               challenge.challengeQuestion,
               style: const TextStyle(
@@ -64,7 +63,7 @@ class ChallengeCard extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
             ),
 
-            // Botones de accion — solo si el reto esta pendiente
+            // acciones
             if (challenge.isPending) ...[
               const SizedBox(height: 16),
               Row(
@@ -104,7 +103,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Tarjeta cerrada — muestra el candado y oculta el contenido del reto
+  // tarjeta cerrada
   Widget _buildClosedCard(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -160,8 +159,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Modal que se abre al pulsar una tarjeta cerrada.
-  // Muestra el contenido del reto y el boton para aceptarlo.
+  // modal reto cerrado
   void _showClosedModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -177,7 +175,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Modal para grabar o subir el video del reto completado
+  // modal completar reto
   void _showDareModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -190,7 +188,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Modal para elegir a quien transferir el reto
+  // modal transferir
   void _showTransferModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -207,7 +205,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Badge que identifica visualmente el tipo de item
+  // badge tipo
   Widget _buildTypeBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -226,7 +224,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Badge especial para los retos del dia
+  // badge daily
   Widget _buildDailyBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -245,7 +243,7 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Badge con el estado actual del reto
+  // badge estado
   Widget _buildStateBadge() {
     Color color;
     String label;
@@ -295,9 +293,7 @@ class ChallengeCard extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Modal CERRADO — muestra el reto y permite aceptarlo
-// ---------------------------------------------------------------------------
+// Modal para reto cerrado
 
 class _ClosedModal extends StatefulWidget {
   final UserChallenge challenge;
@@ -315,7 +311,6 @@ class _ClosedModal extends StatefulWidget {
 class _ClosedModalState extends State<_ClosedModal> {
   bool _isOpening = false;
 
-  // Llama a la API para pasar el reto de CLOSED a OPEN
   Future<void> _open() async {
     setState(() => _isOpening = true);
     try {
@@ -344,7 +339,6 @@ class _ClosedModalState extends State<_ClosedModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle y boton de cerrar
           Row(
             children: [
               const Spacer(),
@@ -379,7 +373,6 @@ class _ClosedModalState extends State<_ClosedModal> {
           ),
           const SizedBox(height: 16),
 
-          // Badges de tipo y daily
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -465,9 +458,7 @@ class _ClosedModalState extends State<_ClosedModal> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Modal de TRANSFERENCIA — permite enviar el reto a un seguido
-// ---------------------------------------------------------------------------
+// Modal transferencia
 
 class _TransferModal extends StatefulWidget {
   final String challengeId;
@@ -495,7 +486,6 @@ class _TransferModalState extends State<_TransferModal> {
     _loadFollowing();
   }
 
-  // Carga la lista de usuarios a los que sigue el usuario autenticado
   Future<void> _loadFollowing() async {
     try {
       final myId = context.read<UserProvider>().profile?.id ?? '';
@@ -511,7 +501,6 @@ class _TransferModalState extends State<_TransferModal> {
     }
   }
 
-  // Muestra un dialogo de confirmacion antes de transferir
   Future<void> _confirmTransfer(FollowUser user) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -703,9 +692,7 @@ class _TransferModalState extends State<_TransferModal> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Modal de completar RETO — permite subir una foto o video de la prueba
-// ---------------------------------------------------------------------------
+// Modal completar reto
 
 class _DareModal extends StatefulWidget {
   final UserChallenge challenge;
@@ -772,7 +759,6 @@ class _DareModalState extends State<_DareModal> {
     );
   }
 
-  // Sube el video a Cloudinary y luego llama a la API para marcar el reto como completado
   Future<void> _complete() async {
     if (_selectedFile == null) return;
     setState(() { _isLoading = true; _isUploading = true; });
@@ -825,7 +811,6 @@ class _DareModalState extends State<_DareModal> {
               style: const TextStyle(fontSize: 15, height: 1.5)),
           const SizedBox(height: 24),
 
-          // Botones para seleccionar el video desde galeria o camara
           Row(
             children: [
               Expanded(

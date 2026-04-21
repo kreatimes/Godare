@@ -5,8 +5,6 @@ import 'package:godare/models/daily_item.dart';
 /// Servicio para el reto/verdad diario del usuario
 class DailyService {
 
-  /// Devuelve el daily de hoy del usuario autenticado.
-  /// Si no tiene ninguno asignado aún, el back genera uno nuevo automáticamente.
   static Future<DailyItem> getMyDaily() async {
     try {
       final response = await ApiClient.instance.get('/api/daily/me');

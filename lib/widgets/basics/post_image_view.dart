@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:godare/widgets/basics/fullscreen_image_view.dart';
 import 'package:godare/widgets/basics/heart_overlay.dart';
 
-/// Widget que muestra la imagen de un post con:
+// Widget que muestra la imagen de un post con:
 /// - Aspect ratio automático según la imagen real
 /// - Doble tap → like (HeartOverlay con animación de corazón)
 /// - Tap simple → pantalla completa con zoom (FullscreenImageView)

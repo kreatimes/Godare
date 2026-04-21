@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:godare/services/report_service.dart';
 
-/// Modal para reportar un post, usuario o comentario.
+// Modal para reportar un post, usuario o comentario.
 class ReportModal extends StatefulWidget {
   final String reportedId;
   final String type; // POST, USER, COMMENT
@@ -77,7 +77,6 @@ class _ReportModalState extends State<ReportModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle
           Center(
             child: Container(
               width: 40,
@@ -90,7 +89,6 @@ class _ReportModalState extends State<ReportModal> {
           ),
           const SizedBox(height: 16),
 
-          // Título
           Row(
             children: [
               const Icon(Icons.flag, color: Colors.red, size: 20),
@@ -116,7 +114,6 @@ class _ReportModalState extends State<ReportModal> {
           ),
           const SizedBox(height: 12),
 
-          // Opciones
           ..._reasons.map((reason) => RadioListTile<String>(
             value: reason.code,
             groupValue: _selectedReason,
@@ -129,7 +126,6 @@ class _ReportModalState extends State<ReportModal> {
 
           const SizedBox(height: 12),
 
-          // Botón enviar
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

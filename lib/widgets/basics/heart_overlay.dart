@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Overlay animado de corazón al hacer doble tap sobre el contenido.
+// Overlay animado de corazón al hacer doble tap sobre el contenido.
 /// Envuelve cualquier widget y ejecuta [onDoubleTap] además de la animación.
 class HeartOverlay extends StatefulWidget {
   final Widget child;

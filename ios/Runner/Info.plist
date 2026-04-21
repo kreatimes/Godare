@@ -41,16 +41,16 @@
 	     iOS cierra la app si faltan y se solicitan
 	═══════════════════════════════════════ -->
 	<key>NSCameraUsageDescription</key>
-	<string>Verdad o Reto necesita la cámara para grabar vídeos y tomar fotos de tus retos.</string>
+	<string>GoDare necesita la cámara para grabar vídeos y tomar fotos de tus retos.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Verdad o Reto necesita acceso a tu galería para subir fotos y vídeos de tus retos.</string>
+	<string>GoDare necesita acceso a tu galería para subir fotos y vídeos de tus retos.</string>
 
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Verdad o Reto necesita permiso para guardar fotos y vídeos en tu galería.</string>
+	<string>GoDare necesita permiso para guardar fotos y vídeos en tu galería.</string>
 
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Verdad o Reto necesita el micrófono para grabar vídeos con audio de tus retos.</string>
+	<string>GoDare necesita el micrófono para grabar vídeos con audio de tus retos.</string>
 
 	<!-- ═══════════════════════════════════════
 	     ATS — Railway usa HTTPS, no se exime nada

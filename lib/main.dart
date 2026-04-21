@@ -79,7 +79,7 @@ class _HomeWithDailyState extends State<HomeWithDaily> {
       final daily = await DailyService.getMyDaily();
       if (!mounted) return;
 
-      // Solo mostramos el dialog si se generó hoy Y no está transferido
+      // solo si es de hoy y no fue transferido
       if (daily.generatedToday && daily.state != 'TRANSFERRED') {
         _showDailyDialog(daily);
       }
@@ -123,7 +123,7 @@ class _HomeWithDailyState extends State<HomeWithDaily> {
             ),
           ],
         ),
-        // No mostramos el título — el reto llega CLOSED y hay que abrirlo primero
+        // el contenido se oculta hasta abrirlo
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

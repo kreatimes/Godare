@@ -6,7 +6,7 @@ import 'package:godare/providers/user_provider.dart';
 import 'package:godare/services/user_service.dart';
 import 'package:godare/values/colors_app.dart';
 
-/// Tarjeta de usuario en listas de seguidores/seguidos.
+// Tarjeta de usuario en listas de seguidores/seguidos.
 /// Muestra avatar, nick y botón de seguir/dejar de seguir.
 /// Al pulsar navega al perfil del usuario.
 class UserElement extends StatefulWidget {
@@ -63,8 +63,7 @@ class _UserElementState extends State<UserElement> {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Avatar
-              CircleAvatar(
+                  CircleAvatar(
                 radius: 28,
                 backgroundImage: widget.user.userImageUrl != null
                     ? NetworkImage(widget.user.userImageUrl!)
@@ -74,7 +73,6 @@ class _UserElementState extends State<UserElement> {
               ),
               const SizedBox(width: 14),
 
-              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,7 +4,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../values/colors_app.dart';
 
-/// Reproductor de vídeo para posts de tipo DARE.
+// Reproductor de vídeo para posts de tipo DARE.
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
 
@@ -108,7 +108,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       aspectRatio: clampedAspect,
       child: Stack(
         children: [
-          // Vídeo
           Positioned.fill(
             child: GestureDetector(
               onTap: _togglePlay,
@@ -261,9 +260,7 @@ class _VideoProgressBar extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Pantalla completa de vídeo
-// ---------------------------------------------------------------------------
 
 class _FullscreenVideoPage extends StatefulWidget {
   final String videoUrl;
@@ -345,7 +342,6 @@ class _FullscreenVideoPageState extends State<_FullscreenVideoPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Vídeo centrado
           Positioned.fill(
             child: GestureDetector(
               onTap: _togglePlay,
