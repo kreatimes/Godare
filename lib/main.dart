@@ -87,10 +87,7 @@ class _HomeWithDailyState extends State<HomeWithDaily> {
   }
 
   void _showDailyDialog(DailyItem daily) {
-    final isDare = daily.isDare;
-    final color = isDare ? ColorsApp.basePink : Colors.deepPurple;
-    // final icon = isDare ? Icons.diamond : Icons.psychology;
-    final typeLabel = isDare ? 'RETO' : 'VERDAD';
+    const color = ColorsApp.basePink;
 
     showDialog(
       context: context,
@@ -114,7 +111,7 @@ class _HomeWithDailyState extends State<HomeWithDaily> {
             ),
             const SizedBox(width: 12),
             Text(
-              '¡$typeLabel DIARIO!',
+              '¡RETO DIARIO!',
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.bold,

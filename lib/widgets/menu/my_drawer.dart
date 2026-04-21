@@ -179,7 +179,7 @@ class MyDrawer extends StatelessWidget {
         ),
         content: const Text(
           '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
-              'Se borrarán todos tus datos, posts, retos y verdades. '
+              'Se borrarán todos tus datos, posts y verdades. '
               'Esta acción no se puede deshacer.',
         ),
         actions: [
